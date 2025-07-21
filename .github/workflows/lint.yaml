@@ -8,7 +8,7 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
-    name: Run tests
+    name: Run tests # Changing job name breaks PR checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,16 +18,10 @@ jobs:
         with:
           go-version: stable
 
-      - name: Install linter
+      - name: Lint code
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1
-
-      - name: Add go to path
-        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
-
-      - name: Check style
-        run: make check-style
 
       - name: Run tests
         run: make test
