@@ -9,7 +9,7 @@ on:
       - "v*"
 
 env:
-  PATH: ${{ env.PATH }}:$HOME/go/bin
+  PATH: $PATH:$HOME/go/bin
 
 jobs:
   lint-and-test:
