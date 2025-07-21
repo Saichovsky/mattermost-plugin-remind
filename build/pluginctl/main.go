@@ -118,7 +118,11 @@ func deploy(client *model.Client4, pluginID, bundlePath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open %s: %w", bundlePath, err)
 	}
-	defer pluginBundle.Close()
+	defer func() {
+		if err := pluginBundle.Close(); err != nil {
+			fmt.Printf("failed to close plugin bundle: %s", err.Error())
+		}
+	}()
 
 	log.Print("Uploading plugin via API.")
 	_, _, err = client.UploadPluginForced(pluginBundle)
