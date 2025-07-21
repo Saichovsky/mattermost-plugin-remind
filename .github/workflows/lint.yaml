@@ -1,4 +1,4 @@
-name: Go Lint and Check Style
+name: Lint and test
 
 on:
   pull_request:
@@ -6,9 +6,9 @@ on:
       - master
 
 jobs:
-  lint:
+  lint-and-test:
     runs-on: ubuntu-latest
-    name: Check Style
+    name: Run tests # Changing job name breaks PR checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,7 +17,11 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-      - name: Install golangci-lint
+
+      - name: Lint code
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1
+
+      - name: Run tests
+        run: make test
