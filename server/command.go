@@ -87,7 +87,7 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 		return &model.CommandResponse{}, nil
 	}
 
-	payload := strings.Trim(strings.Replace(command, "/"+CommandTrigger, "", -1), " ")
+	payload := strings.Trim(strings.ReplaceAll(command, "/"+CommandTrigger, ""), " ")
 	request := ReminderRequest{
 		TeamId:   args.TeamId,
 		Username: user.Username,

@@ -15,7 +15,11 @@ import (
 func TestTranslationsPreInit(t *testing.T) {
 	tmpDir := os.TempDir()
 	assetsPath := filepath.Join(tmpDir, "assets")
-	defer os.RemoveAll(assetsPath)
+	defer func() {
+		if err := os.RemoveAll(assetsPath); err != nil {
+			fmt.Printf("failed to remove assets directory: %s", err.Error())
+		}
+	}()
 	err := os.Mkdir(assetsPath, 0777)
 	require.NoError(t, err)
 
@@ -41,8 +45,16 @@ func TestTranslationsPreInit(t *testing.T) {
 
 		file, err := os.Create(i18nPath)
 		require.NoError(t, err)
-		file.Close()
-		defer os.Remove(file.Name())
+		defer func() {
+			if err := file.Close(); err != nil {
+				fmt.Printf("failed to close file: %s", err.Error())
+			}
+		}()
+		defer func() {
+			if err := os.Remove(file.Name()); err != nil {
+				fmt.Printf("failed to remove file: %s", err.Error())
+			}
+		}()
 
 		p := &Plugin{}
 		p.API = api
@@ -59,7 +71,11 @@ func TestTranslationsPreInit(t *testing.T) {
 
 		err := os.Mkdir(i18nPath, 0777)
 		require.NoError(t, err)
-		defer os.Remove(i18nPath)
+		defer func() {
+			if err := os.Remove(i18nPath); err != nil {
+				fmt.Printf("failed to remove directory: %s", err.Error())
+			}
+		}()
 
 		p := &Plugin{}
 		p.API = api
