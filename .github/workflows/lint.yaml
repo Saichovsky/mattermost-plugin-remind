@@ -1,16 +1,12 @@
-name: Mattermost Plugin CI
+name: Lint and test
 
 on:
   pull_request:
     branches:
       - master
-  push:
-    tags:
-      - "v*"
 
 jobs:
   lint-and-test:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: Run tests
     steps:
@@ -35,27 +31,3 @@ jobs:
 
       - name: Run tests
         run: make test
-
-  build:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    name: Test and build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: stable
-
-      - name: Install linter
-        uses: golangci/golangci-lint-action@v8
-        with:
-          version: v2.1
-
-      - name: Add go to path
-        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
-
-      - name: Run build
-        run: make
