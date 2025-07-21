@@ -8,9 +8,6 @@ on:
     tags:
       - "v*"
 
-env:
-  PATH: $PATH:$HOME/go/bin
-
 jobs:
   lint-and-test:
     if: github.event_name == 'pull_request'
@@ -29,6 +26,9 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1
+
+      - name: Add go to path
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
       - name: Check style
         run: make check-style
@@ -53,6 +53,9 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1
+
+      - name: Add go to path
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
       - name: Run build
         run: make
