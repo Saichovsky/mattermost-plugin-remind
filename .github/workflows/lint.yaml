@@ -1,14 +1,21 @@
-name: Go Lint and Check Style
+name: Mattermost Plugin CI
 
 on:
   pull_request:
     branches:
       - master
+  push:
+    tags:
+      - "v*"
+
+env:
+  PATH: ${{ env.PATH }}:$HOME/go/bin
 
 jobs:
-  lint:
+  lint-and-test:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    name: Check Style
+    name: Run tests
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,9 +24,35 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-      - name: Install golangci-lint
+
+      - name: Install linter
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1
+
+      - name: Check style
+        run: make check-style
+
       - name: Run tests
-        run: set PATH=$(go env GOPATH)/bin:$PATH && make test
+        run: make test
+
+  build:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Test and build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Install linter
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.1
+
+      - name: Run build
+        run: make
